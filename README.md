@@ -1,3 +1,3 @@
 # Flow Activities
 
-Code repositotry for custom activities for Built.io Flow. 
+Custom activities for Built.io Flow. 
