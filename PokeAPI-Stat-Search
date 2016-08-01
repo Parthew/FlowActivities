@@ -1,0 +1,102 @@
+/**
+ * Pokemon Stat Search
+ *
+ * @author Parthiv Patel (twitter/github: @parthew)
+ *
+ * @platform Built.io Flow
+ *
+ * @description Node.js script to create an activity for the PokeAPI database.
+ *      Given a Pokemon Name, returns basic stats.
+ */
+
+/**
+ * Imports
+ */
+const request = require('request');
+
+/**
+ * Module configuration variables
+ */
+const activityId = 'pokeapi-stats-search';                        // Activity ID
+const activityLabel = 'Pokemon Stat Search';                     // Activity Label
+const activityHelp = 'Given a Pokemon, returns basic stats';    // Help Text
+
+const activityInputSchema = {
+    title: 'Pokemon Stat Search',
+    type: 'object',
+    properties: {
+        pokemonName: {
+            title: 'Pokemon Name',
+            type: 'string',
+            description: 'Enter the name of a Pokemon',
+            minLength: 1
+        }
+    }
+};
+
+const activityOutputSchema = {
+    title:'Output',
+    type: 'object',
+    properties: {
+        "id": {
+                "type": "integer",
+                "title": "id"
+            },
+        "name": {
+                "type": "string",
+                "title": "name"
+            },
+        "base_experience": {
+                "type": "integer",
+                "title": "base_experience"
+            },
+        "height": {
+                "type": "integer",
+                "title": "height"
+            },
+        "order": {
+                "type": "integer",
+                "title": "order"
+            },
+        "weight": {
+                "type": "integer",
+                "title": "weight"
+            }
+    }
+};
+
+/**
+ * executeActivity()
+ *
+ * @description This function performs the API call and any necessary manipulation.
+ */
+function executeActivity(input, output) {
+    // Go on and perform the request.
+    request({
+        method: 'GET',
+        url: 'http://pokeapi.co/api/v2/pokemon/' + input.pokemonName
+    }, function optionalCallback(err, response, body) {
+        if (err) {
+            return output(err);
+        } else {
+            var returnedResponse = body;
+
+            if (response.statusCode && response.statusCode >= 200 && response.statusCode < 400) {
+            return output(null, returnedResponse);
+            }
+            return output(returnedResponse);
+        }
+    });
+}
+
+/**
+ * Built.io activity creation happens here.
+ */
+module.exports = function() {
+    this.id = activityId;
+    this.label = activityLabel;
+    this.help = activityHelp;
+    this.input = activityInputSchema;
+    this.output = activityOutputSchema;
+    this.execute = executeActivity;
+};
